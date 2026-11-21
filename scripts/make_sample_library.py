@@ -49,7 +49,10 @@ def video(path, codec):
     cmd = ['ffmpeg', '-v', 'error', '-y', '-f', 'lavfi', '-i', 'testsrc2=size=640x360:rate=25:duration=20',
            '-f', 'lavfi', '-i', 'sine=frequency=440:duration=20', *args, '-c:a', 'aac', '-shortest',
            '-movflags', '+faststart', str(path)]
-    return subprocess.run(cmd).returncode == 0
+    r = subprocess.run(cmd, capture_output=True, text=True)
+    if r.returncode != 0:
+        print(f'ffmpeg failed for {path.name}: {r.stderr.strip()[-300:]}', file=sys.stderr)
+    return r.returncode == 0
 
 
 def main():

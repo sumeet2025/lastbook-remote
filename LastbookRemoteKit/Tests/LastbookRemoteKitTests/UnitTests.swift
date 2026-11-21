@@ -197,3 +197,16 @@ final class StoreTests: XCTestCase {
         }
     }
 }
+
+final class UnreachableTests: XCTestCase {
+    func testStoppedHostIsUnreachable() async throws {
+        // Nothing listens on port 9: what the app sees after sharing is stopped or the host sleeps.
+        let client = LastbookClient(baseURL: URL(string: "http://127.0.0.1:9/")!, key: "k", timeout: 5)
+        do {
+            _ = try await client.testConnection()
+            XCTFail("expected an error")
+        } catch let e as LastbookError {
+            XCTAssertTrue(e.isConnectivity, "\(e)")
+        }
+    }
+}

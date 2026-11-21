@@ -27,7 +27,7 @@ public actor OfflineStore {
     public static let defaultCap: Int64 = 5 * 1024 * 1024 * 1024  // 5 GB
     public static let chunkSize: Int64 = 8 * 1024 * 1024
 
-    public let folder: URL
+    public nonisolated let folder: URL
     public private(set) var cap: Int64
     private var items: [SavedItem]
     private var indexURL: URL { folder.appendingPathComponent("index.json") }
