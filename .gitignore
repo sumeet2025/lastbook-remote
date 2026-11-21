@@ -1,0 +1,37 @@
+# Xcode / Swift
+DerivedData/
+build/
+.build/
+.swiftpm/xcode/
+*.xcuserstate
+xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM
+*.dSYM.zip
+*.playground
+timeline.xctimeline
+playground.xcworkspace
+
+# Signing and local machine settings (placeholders stay in the repo; real values do not)
+Local.xcconfig
+*.mobileprovision
+*.cer
+*.certSigningRequest
+*.p12
+*.p8
+
+# CocoaPods / Carthage / SPM checkouts
+Pods/
+Carthage/Build/
+Carthage/Checkouts/
+
+# OS and editors
+.DS_Store
+*.swp
+*~
+.idea/
+.vscode/
