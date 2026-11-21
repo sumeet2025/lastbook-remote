@@ -1,0 +1,7 @@
+// Copy to Config/Local.xcconfig (git-ignored) and fill in.
+// Your team ID: Xcode → Settings → Accounts → your Apple ID → the team's ID (10 characters),
+// or developer.apple.com → Membership. A free "Personal Team" works for running on your own devices.
+
+DEVELOPMENT_TEAM = ABCDE12345
+// Must be unique to you, e.g. com.<yourname>. The app's ID becomes <prefix>.lastbookremote
+LASTBOOK_BUNDLE_ID_PREFIX = com.yourname
