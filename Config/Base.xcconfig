@@ -1,0 +1,8 @@
+// Shared build settings for the LastbookRemote app target.
+// Put your own signing team and bundle ID prefix in Config/Local.xcconfig (git-ignored);
+// copy Config/Local.xcconfig.example to start.
+
+LASTBOOK_BUNDLE_ID_PREFIX = org.example
+DEVELOPMENT_TEAM =
+
+#include? "Local.xcconfig"
