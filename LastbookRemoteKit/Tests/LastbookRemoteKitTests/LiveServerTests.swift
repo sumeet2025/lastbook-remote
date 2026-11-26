@@ -110,12 +110,60 @@ final class LiveServerTests: XCTestCase {
         XCTAssertEqual((plain as? HTTPURLResponse)?.statusCode, 403)
     }
 
-    func testWebAppLinkSetsCookie() async throws {
+    func testPageLinkSetsCookieAndRedirectsToCleanURL() throws {
+        // Lastbook PR #343 (499a6d0): a page navigation with ?key= gets the sg_key cookie and a
+        // 302 to the same address without the key, so it leaves the address bar.
+        let (status, headers) = try NoRedirect.fetch(client.webAppURL)
+        XCTAssertEqual(status, 302)
+        let location = try XCTUnwrap(headers["Location"] ?? headers["location"])
+        XCTAssertFalse(location.contains("key="), "redirect must drop the key")
+        XCTAssertTrue((headers["Set-Cookie"] ?? headers["set-cookie"] ?? "").contains("sg_key="))
+    }
+
+    func testWebAppLoadsAfterRedirect() async throws {
+        // A browser (or WKWebView) follows the 302 with the cookie it was just given.
         let (data, resp) = try await URLSession(configuration: .ephemeral).data(for: URLRequest(url: client.webAppURL))
         let http = try XCTUnwrap(resp as? HTTPURLResponse)
         XCTAssertEqual(http.statusCode, 200)
-        XCTAssertTrue((http.value(forHTTPHeaderField: "Set-Cookie") ?? "").contains("sg_key="))
+        XCTAssertFalse(http.url?.absoluteString.contains("key=") ?? true)
         XCTAssertTrue(String(decoding: data, as: UTF8.self).lowercased().contains("<html"))
+    }
+
+    func testAPIWithQueryKeyIsServedInPlace() throws {
+        let url = client.url(encodedPath: "/api/library", query: [URLQueryItem(name: "key", value: link.key)])
+        let (status, _) = try NoRedirect.fetch(url)
+        XCTAssertEqual(status, 200)
+        let (docStatus, _) = try NoRedirect.fetch(client.keyedURL(path: "documents/water-guide.pdf"))
+        XCTAssertEqual(docStatus, 200)
+    }
+
+    func testBearerIsAccepted() async throws {
+        var r = URLRequest(url: client.url(encodedPath: "/api/library"))
+        r.setValue("Bearer \(link.key)", forHTTPHeaderField: "Authorization")
+        let (_, resp) = try await URLSession(configuration: .ephemeral).data(for: r)
+        XCTAssertEqual((resp as? HTTPURLResponse)?.statusCode, 200)
+    }
+
+    func testChatNotSharedByDefault() async throws {
+        // server.py --lan never shares Chat; the desktop app only with "Include Chat" on.
+        let status = try await client.assistantStatus()
+        XCTAssertEqual(status.shared, false)
+        XCTAssertFalse(status.chatAvailable)
+        var r = client.authorizedRequest(client.url(encodedPath: "/api/chat"), method: "POST")
+        r.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        r.httpBody = Data(#"{"q":"boil water"}"#.utf8)
+        do {
+            try await client.send(r)
+            XCTFail("expected 403")
+        } catch let e as LastbookError {
+            XCTAssertEqual(e, .notShared)
+        }
+    }
+
+    func testHeadGivesSizeAndDate() async throws {
+        let size = try await client.contentLength(path: "documents/water-guide.pdf")
+        let catalogSize = try await client.item("water-guide").bytes
+        XCTAssertEqual(size, catalogSize)
     }
 
     func testSaveForOfflineResumeDeleteAndCap() async throws {
@@ -178,5 +226,34 @@ final class LiveServerTests: XCTestCase {
         XCTAssertEqual(txt.itemKind, .text)
         let mdItem = try await client.item("solar-md")
         XCTAssertEqual(mdItem.itemKind, .markdown)
+    }
+}
+
+/// Fetch one URL without following redirects (synchronously, for header checks).
+final class NoRedirect: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        completionHandler(nil)
+    }
+
+    static func fetch(_ url: URL) throws -> (Int, [String: String]) {
+        let delegate = NoRedirect()
+        let session = URLSession(configuration: .ephemeral, delegate: delegate, delegateQueue: nil)
+        defer { session.finishTasksAndInvalidate() }
+        let done = DispatchSemaphore(value: 0)
+        var result: (Int, [String: String])?
+        var failure: Error?
+        session.dataTask(with: url) { _, resp, err in
+            if let http = resp as? HTTPURLResponse {
+                var h: [String: String] = [:]
+                for (k, v) in http.allHeaderFields { h["\(k)"] = "\(v)" }
+                result = (http.statusCode, h)
+            }
+            failure = err
+            done.signal()
+        }.resume()
+        _ = done.wait(timeout: .now() + 10)
+        if let result { return result }
+        throw failure ?? URLError(.timedOut)
     }
 }

@@ -30,7 +30,7 @@ final class LibrarySession: ObservableObject {
         do {
             let summary = try await client.testConnection()
             status = .connected(summary)
-            chatAvailable = (try? await client.assistantStatus())?.shared ?? false
+            chatAvailable = (try? await client.assistantStatus())?.chatAvailable ?? false
         } catch let e as LastbookError {
             status = .failed(e)
         } catch {

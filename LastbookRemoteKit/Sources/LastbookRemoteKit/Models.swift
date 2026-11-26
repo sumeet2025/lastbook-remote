@@ -213,10 +213,23 @@ public struct PageText: Codable, Hashable, Sendable {
 }
 
 /// `/api/assistant/status` as the share listener answers it.
+///
+/// When the host has not turned on "Include Chat with this computer's local AI", the listener answers
+/// `{"online": false, "available": false, "shared": false, "coverage": {}}` and `POST /api/chat` is a
+/// JSON 403 ("not part of what is shared"). When Chat is shared, the body is the host's model status
+/// (`model`, `online`, `error`, `local`, `vision`, `index`, `coverage`) with no `shared` key.
 public struct AssistantStatus: Codable, Hashable, Sendable {
     public var online: Bool?
     public var available: Bool?
     public var shared: Bool?
+    public var model: String?
+    public var error: String?
+
+    /// The host shares Chat with other devices.
+    public var isShared: Bool { shared != false && available != false }
+
+    /// Chat is shared and the host's model answers right now.
+    public var chatAvailable: Bool { isShared && online == true }
 }
 
 /// Decoding that tolerates a number sent as a string or a float sent where an int is expected.

@@ -210,3 +210,20 @@ final class UnreachableTests: XCTestCase {
         }
     }
 }
+
+final class AssistantStatusTests: XCTestCase {
+    func testNotShared() throws {
+        let s = try JSONDecoder().decode(AssistantStatus.self, from: Data(#"{"online":false,"available":false,"shared":false,"coverage":{}}"#.utf8))
+        XCTAssertFalse(s.isShared)
+        XCTAssertFalse(s.chatAvailable)
+    }
+
+    func testSharedModelOnlineAndOffline() throws {
+        let on = try JSONDecoder().decode(AssistantStatus.self, from: Data(#"{"model":"gemma","online":true,"error":null,"local":{},"vision":false,"index":{},"coverage":{}}"#.utf8))
+        XCTAssertTrue(on.isShared)
+        XCTAssertTrue(on.chatAvailable)
+        let off = try JSONDecoder().decode(AssistantStatus.self, from: Data(#"{"model":"gemma","online":false,"error":"URLError","vision":true,"coverage":{}}"#.utf8))
+        XCTAssertTrue(off.isShared)
+        XCTAssertFalse(off.chatAvailable)
+    }
+}
