@@ -48,7 +48,7 @@ Do not put the access link on the public internet. The server is plain HTTP with
 ## Features in v0.1
 
 - One universal app for iPhone and iPad.
-- Connect by pasting the host's access link, or typing the IP, port and key. Keys are stored in the Keychain. Remember more than one library and switch between them. The app refuses public internet addresses and host names.
+- Connect by pasting the host's access link, scanning it as a QR code with the camera, or typing the IP, port and key. Keys are stored in the Keychain. Remember more than one library and switch between them. The app refuses public internet addresses and host names.
 - Native **Browse** (shelves → collections → items, including courses), **Search** (`/api/find`, with highlighted matches), and **Videos** rows.
 - Native **PDF** viewing (PDFKit, opens at the matching page from a search), text and Markdown, and saved web pages.
 - **Video** with AVPlayer: streaming with Range seeking, Picture in Picture, AirPlay and background audio. AV1, VP9, WebM and MKV files that the device can't decode show a clear message instead of a black screen.
@@ -56,7 +56,7 @@ Do not put the access link on the public internet. The server is plain HTTP with
 - **Save for offline** of single items: the size is shown first, downloads resume with HTTP Range, a storage cap (5 GB by default) refuses saves that would go over, and a **Downloaded** screen opens items with no network and deletes one or all.
 - A reconnect screen when the host is asleep, sharing is off, or the key changed.
 
-Later, when Lastbook adds them: automatic discovery on the local network, pairing tokens, a QR code, HTTPS, host names, and H.264 copies of AV1 videos.
+Later, when Lastbook adds them: automatic discovery on the local network, pairing tokens, a QR code shown by the host (the app can already scan one), HTTPS, host names, and H.264 copies of AV1 videos.
 
 ## Roadmap
 

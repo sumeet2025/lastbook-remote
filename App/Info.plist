@@ -29,6 +29,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Lastbook Remote uses the camera only to scan the access link QR code from your Lastbook computer.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Lastbook Remote connects to the Lastbook library shared by a computer on your network.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

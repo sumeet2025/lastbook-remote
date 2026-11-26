@@ -227,3 +227,28 @@ final class AssistantStatusTests: XCTestCase {
         XCTAssertFalse(off.chatAvailable)
     }
 }
+
+final class ScannedLinkTests: XCTestCase {
+    func testQRPayloadWithWhitespaceAndBOM() {
+        let l = AccessLink.parse("\u{FEFF}  http://192.168.1.136:8890/?key=AbC-123_x\r\n")
+        XCTAssertEqual(l, AccessLink(host: "192.168.1.136", port: 8890, key: "AbC-123_x"))
+    }
+
+    func testUppercaseSchemeAndTextAround() {
+        XCTAssertEqual(AccessLink.parse("Scan me: HTTP://10.0.0.5:8891/?key=k1 thanks")?.port, 8891)
+    }
+
+    func testLastbookScheme() {
+        let l = AccessLink.parse("lastbook://100.101.102.5:8890/?key=k2")
+        XCTAssertEqual(l, AccessLink(scheme: "http", host: "100.101.102.5", port: 8890, key: "k2"))
+    }
+
+    func testVerdicts() {
+        XCTAssertEqual(AccessLink.inspect("http://192.168.1.136:8890/"), .missingKey)
+        XCTAssertEqual(AccessLink.inspect("WIFI:S:Home;T:WPA;P:secret;;"), .notALink)
+        XCTAssertEqual(AccessLink.inspect("hello world"), .notALink)
+        XCTAssertEqual(AccessLink.inspect(""), .notALink)
+        XCTAssertEqual(AccessLink.inspect("https://example.com/menu"), .missingKey)
+        if case .link = AccessLink.inspect("192.168.1.20:8890/?key=z") {} else { XCTFail("bare address with key") }
+    }
+}

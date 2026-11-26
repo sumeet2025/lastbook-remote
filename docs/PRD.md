@@ -65,7 +65,10 @@ A universal iPhone and iPad app in this repository: `LastbookRemote.xcodeproj` g
 1. One SwiftUI app target for iPhone and iPad (`TARGETED_DEVICE_FAMILY = 1,2`), iOS/iPadOS 17 or later. Layouts adapt to compact and regular widths, portrait and landscape.
 2. **Do not install the library.** No installer, packs, models, search index, or a copy of `LastbookData` on the device. That is an explicit non-goal. Small caches are allowed (thumbnails, recently viewed documents, the HTTP cache), with a size cap and a "Clear cache" action. Items the person chooses to save are covered in **Save on this device** below.
 3. Connect, until Lastbook has pairing and Bonjour:
-   - Support the **current access link**. The person pastes it (`http://<ip>:<port>/?key=…`) or scans it (paste must work; the host shows no QR yet), or types IP, port and key.
+   - Support the **current access link** (`http://<ip>:<port>/?key=…`) three ways:
+     - **Paste** it (Copy link on the computer, then Universal Clipboard). This must always work.
+     - **Scan** it as a QR code: VisionKit `DataScannerViewController` limited to `.barcode(symbologies: [.qr])`, in a sheet that works on iPhone and iPad. The scanned text goes through the same `AccessLink` parser as a paste (surrounding whitespace, line breaks, a byte-order mark, text around the link and a `lastbook://` scheme are tolerated). A valid link fills the fields and closes the scanner; another QR code, or an address with no `key=`, shows a short message and scanning continues. The camera is asked for only when the person taps Scan (`NSCameraUsageDescription`: "Lastbook Remote uses the camera only to scan the access link QR code from your Lastbook computer."); if access is denied, the sheet says so and links to Settings. Where VisionKit can't scan (the Simulator, unsupported hardware), the Scan button is hidden with a note; every iOS 17 device has a supported camera, so there is no AVFoundation fallback. The scanned key is never logged, shown in the link field, or stored anywhere except the Keychain on Save. Lastbook does not show a QR code yet; until it does, a QR can be made on the computer itself (see TESTING.md), never with an online generator.
+     - **Type** IP, port and key.
    - Store the key in the Keychain (`kSecAttrAccessibleWhenUnlockedThisDeviceOnly`), never in UserDefaults or a plist.
    - Manual address entry so it works over Tailscale, WireGuard, or another VPN. Default to a bare IP. Refuse host names (Lastbook refuses them) and public internet addresses (plain HTTP with a key).
    - Remember multiple libraries, with a switcher.
@@ -127,7 +130,7 @@ What `LastbookRemoteKit` and the app have today (v0.1, PR #1 in this repo):
 
 - `LastbookClient`: header auth on every request, `keyedURL()` for AVPlayer/AirPlay, `webAppURL` for the web view, HEAD size, Range reads, error mapping for wrong key / not shared / host name / 404 / unreachable / ATS, and `AssistantStatus.chatAvailable`.
 - `OfflineStore` (actor): explicit save of one item, foreground download in 8 MiB `Range` chunks into a `.part` file that resumes, a storage cap checked before downloading, an index that survives relaunch, delete one / delete all, `isExcludedFromBackup` on the folder.
-- App: Save for offline with size confirmation, progress and cancel; a Downloaded screen (storage used against the cap) that opens PDFs, text, web pages and videos with no network; videos that can't play are not offered for saving.
+- App: connect by paste, QR scan (VisionKit) or typing; Save for offline with size confirmation, progress and cancel; a Downloaded screen (storage used against the cap) that opens PDFs, text, web pages and videos with no network; videos that can't play are not offered for saving.
 
 Gaps to close, in order:
 

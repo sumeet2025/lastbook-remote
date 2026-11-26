@@ -60,6 +60,7 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
+        NSCameraUsageDescription: Lastbook Remote uses the camera only to scan the access link QR code from your Lastbook computer.
         NSLocalNetworkUsageDescription: Lastbook Remote connects to the Lastbook library shared by a computer on your network.
         # Lastbook's share listener is plain HTTP. NSAllowsLocalNetworking alone does not cover
         # Tailscale's 100.64.0.0/10 addresses, and NSAllowsArbitraryLoads is ignored when any narrower

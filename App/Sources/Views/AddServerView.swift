@@ -2,7 +2,7 @@ import LastbookRemoteKit
 import SwiftUI
 import UIKit
 
-/// Add or edit a library: paste the access link, or type the address, port and key.
+/// Add or edit a library: paste or scan the access link, or type the address, port and key.
 struct AddServerView: View {
     @EnvironmentObject var model: AppModel
     @Environment(\.dismiss) private var dismiss
@@ -16,6 +16,7 @@ struct AddServerView: View {
     @State private var key = ""
     @State private var testing = false
     @State private var result: TestResult?
+    @State private var scanning = false
 
     enum TestResult: Equatable {
         case ok(String)
@@ -46,10 +47,21 @@ struct AddServerView: View {
                     } label: {
                         Label("Paste access link", systemImage: "doc.on.clipboard")
                     }
+                    if QRScannerSheet.isSupported {
+                        Button {
+                            scanning = true
+                        } label: {
+                            Label("Scan QR code", systemImage: "qrcode.viewfinder")
+                        }
+                    }
                 } header: {
                     Text("Access link")
                 } footer: {
-                    Text("Copy it from Lastbook on the computer (Library and local AI → Share this library with my devices), or from the line python3 server.py --lan prints.")
+                    if QRScannerSheet.isSupported {
+                        Text("Copy it from Lastbook on the computer (Library and local AI → Share this library with my devices), or from the line python3 server.py --lan prints. If the computer shows the link as a QR code, scan it.")
+                    } else {
+                        Text("Copy it from Lastbook on the computer (Library and local AI → Share this library with my devices), or from the line python3 server.py --lan prints. Scanning a QR code isn't available on this device.")
+                    }
                 }
 
                 Section {
@@ -105,6 +117,10 @@ struct AddServerView: View {
                 }
             }
             .onAppear(perform: loadExisting)
+            .sheet(isPresented: $scanning) {
+                QRScannerSheet { scanned in fill(scanned) }
+                    .presentationDetents([.large])
+            }
         }
     }
 
@@ -118,6 +134,12 @@ struct AddServerView: View {
 
     private func apply(_ text: String) {
         guard let l = AccessLink.parse(text) else { return }
+        fill(l)
+    }
+
+    /// Fill the fields from a pasted or scanned link. A scanned key goes only into the key field
+    /// (and, on Save, the Keychain); it is not shown in the link field.
+    private func fill(_ l: AccessLink) {
         host = l.host
         port = String(l.port)
         key = l.key

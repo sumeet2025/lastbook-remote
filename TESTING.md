@@ -79,6 +79,17 @@ Connect (same Wi-Fi as the Mac):
 2. iOS asks to find devices on your local network → **Allow**. (If you denied it: Settings → Lastbook Remote → Local Network.)
 3. The library opens on **Browse**.
 
+Scan a QR code (on a real iPhone or iPad; the Simulator has no camera, so the Scan button is hidden there):
+
+3a. Lastbook doesn't show a QR code yet, so make one **on the Mac**. The link contains the secret key, so don't use a website or an online QR generator. Either:
+   - Terminal: `brew install qrencode`, then copy the access link (Copy link) and run `pbpaste | qrencode -t ansiutf8`. The QR code appears in the Terminal window. (Or `pbpaste | qrencode -o /tmp/lastbook-link.png && open /tmp/lastbook-link.png`, and delete the file afterwards.)
+   - Shortcuts: make a shortcut with **Get Clipboard** → **Generate QR Code** → **Quick Look**, copy the link, and run it.
+3b. In the app, delete the library you just added (or add a second one), tap **Add a library** → **Scan QR code**. The first time, iOS asks for the camera; allow it. Point at the QR code: the sheet closes and the IP, port and key fill in. The link field stays empty, so the key isn't shown. **Test connection**, **Save**.
+3c. Scan a QR code that isn't an access link (any product or Wi-Fi code; or `echo 'http://192.168.1.20:8890/' | qrencode -t ansiutf8` for a link with no key). The sheet stays open and shows a short message; then scan the right code and it still works.
+3d. Settings → Lastbook Remote → Camera off. Tap **Scan QR code** again: you get "Camera access is off" with **Open Settings**, which opens the app's settings. Turn Camera back on.
+3e. On the iPad, repeat 3b in portrait and landscape, and in Split View: the scanner sheet and its message should fit.
+3f. Clear the Terminal (`clear`) or close the QR window when done.
+
 Browse and read:
 
 4. Open a shelf, then a collection (a course shows all its PDFs and videos), then a PDF. It opens in the native viewer; pinch to zoom, scroll pages.

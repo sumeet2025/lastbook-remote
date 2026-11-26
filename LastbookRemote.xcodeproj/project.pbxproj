@@ -21,6 +21,7 @@
 		79D9139E197DCE2DC8687061 /* WebViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAF379A7E886AD7B8675E07 /* WebViews.swift */; };
 		944454D60ED0F93C2F5D27BE /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D1AA19846F6976961FDE8B8 /* SearchView.swift */; };
 		A18B51AA14690111FE586109 /* PDFDocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73655C598AF0F539513A7136 /* PDFDocumentView.swift */; };
+		A380B2001DC86B3E7DF1EDBB /* QRScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE69A63ED387DCE8E0B49E58 /* QRScannerView.swift */; };
 		A3FBCE55C2C327369A2A6007 /* LibrarySession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D8CB3D28439B3B966BBA6C /* LibrarySession.swift */; };
 		B68B2332C37892B372473604 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B3AE2527F072CDBF358DAE /* AppModel.swift */; };
 		BB1AB7CBA073D492F57D567E /* ViewerCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53704DB5441508194D1B8341 /* ViewerCache.swift */; };
@@ -51,6 +52,7 @@
 		CEDA90BCE6E8953A028DBC34 /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
 		D1DBF55202722578FC730ECE /* DownloadsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsView.swift; sourceTree = "<group>"; };
 		D6A91D38CAF3FCCB5785E5B1 /* LastbookRemote.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LastbookRemote.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE69A63ED387DCE8E0B49E58 /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerView.swift; sourceTree = "<group>"; };
 		F123997E1208ADA61B306F8D /* VideosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideosView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -140,6 +142,7 @@
 				83E7176B84F51F9BAFDAC894 /* ItemRow.swift */,
 				CEDA90BCE6E8953A028DBC34 /* ItemView.swift */,
 				9DC639111198CA26F3954B14 /* LibraryView.swift */,
+				EE69A63ED387DCE8E0B49E58 /* QRScannerView.swift */,
 				0D1AA19846F6976961FDE8B8 /* SearchView.swift */,
 				605F6B7FA96F2802428971CB /* ServerListView.swift */,
 				5F8160D4E9D0D3431E8EAF73 /* SettingsView.swift */,
@@ -252,6 +255,7 @@
 				A3FBCE55C2C327369A2A6007 /* LibrarySession.swift in Sources */,
 				5B4615CA61B9EA89DEFC5302 /* LibraryView.swift in Sources */,
 				A18B51AA14690111FE586109 /* PDFDocumentView.swift in Sources */,
+				A380B2001DC86B3E7DF1EDBB /* QRScannerView.swift in Sources */,
 				944454D60ED0F93C2F5D27BE /* SearchView.swift in Sources */,
 				66CE830625350980F3400211 /* ServerListView.swift in Sources */,
 				1C6711CC8AC764E8369526F9 /* SettingsView.swift in Sources */,
