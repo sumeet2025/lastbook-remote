@@ -41,7 +41,7 @@ LASTBOOK_TEST_LINK='http://127.0.0.1:8890/?key=…' swift test
    - In the Lastbook desktop app, turn on **Share this library with my devices** in Library and local AI. That switch is in [upstream pull request #343](https://github.com/Immortal-Protocols/lastbook/pull/343) and is off by default.
    - Until that lands, you can already run `python3 server.py --lan --data /path/to/LastbookData` on the host. It prints an access link.
 2. On your iPhone or iPad, this app connects to that host over the same Wi-Fi, or over a private VPN such as Tailscale. Today the host only accepts a bare IP address, not a name (including Tailscale MagicDNS).
-3. You get the library's documents, search, maps, encyclopedias, and videos, and Chat if the host has local AI installed. The phone does not download the library. Search, encyclopedia links, and Chat still need the host even if you have saved a few items for offline use.
+3. You get the library's documents, search, maps, encyclopedias, and videos, and Chat if the host has local AI and turns on "Include Chat" for shared devices (off by default). The phone does not download the library. You can save single documents, videos and pages on that iPhone or iPad for later; search, encyclopedia links, maps and Chat still need the host.
 
 Do not put the access link on the public internet. The server is plain HTTP with a key in the link.
 

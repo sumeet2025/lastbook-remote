@@ -8,18 +8,18 @@ Lastbook's share listener (`python3 server.py --lan`, or **Share this library wi
 http://192.168.1.20:8890/?key=AbCdEf…
 ```
 
-The key is in `derived/lan-key` next to the Lastbook program (delete that file to make a new key). Every request needs it. The listener accepts it four ways, and this app uses three:
+The key is in `derived/lan-key` inside the **library data folder** (the `LastbookData` folder, or whatever `--data` points to). It stays the same when you stop and start sharing; to make a new one, stop sharing, delete that file, and start sharing again. Every request needs it. The listener accepts it four ways (checked in this order: query, Bearer, header, cookie), and this app uses three:
 
 | Where | Used by this app for |
 |---|---|
 | `X-Lastbook-Key` header | every API call, document, thumbnail and Save for offline download |
-| `?key=` in the URL | video streaming: AVPlayer can't add a header to its Range requests, and an AirPlay receiver fetches the URL itself |
-| `sg_key` cookie | the web views (the Lastbook tab and saved web pages), so their images, styles and frames are admitted |
+| `?key=` in the URL | video streaming: AVPlayer can't add a header to its Range requests without private API, and an AirPlay receiver fetches the URL itself. Media, API and Range requests with `?key=` are served in place (no redirect). |
+| `sg_key` cookie | the web views only. Opening the access link (`/?key=…`) as a page sets the cookie and redirects (302) to the same address without the key, so it leaves the address bar. The app also puts the cookie in the web view's store before loading. |
 | `Authorization: Bearer` | not used |
 
-The listener serves only a read-only allowlist: library browsing, files, search, encyclopedias, maps and videos. Setup, updates, notes, battery, local-AI controls, tools and the share switch itself answer 403 to other devices, and this app never asks for them. Chat with the host's local AI is a separate option on the host, off by default.
+The listener serves only a read-only allowlist: library browsing, files, search, encyclopedias, maps and videos. Setup, updates, notes, battery, local-AI controls, tools and the share switch itself answer 403 to other devices, and this app never asks for them. Chat with the host's local AI is a separate option on the host ("Include Chat with this computer's local AI"), off by default and never on with `server.py --lan`. When it is off, `/api/assistant/status` answers `{"shared": false, …}` and `POST /api/chat` is a JSON 403; the app hides Chat.
 
-Without the key, or with a wrong one, everything is 403, including `/`. Stopping sharing closes the port. The app's API session stores no cookies, so a changed key or stopped share takes effect on the next request.
+Without the key, or with a wrong one, everything is 403 with an HTML page ("This guide is shared on this network only with an access link…"), including `/`. A route that is not shared is a different 403, JSON `{"error": "This is not part of what is shared from this library."}`. The app shows different messages for the two. Stopping sharing closes the port. The app's API session stores no cookies, so a changed key or stopped share takes effect on the next request.
 
 ## Addresses
 
@@ -40,12 +40,12 @@ Both devices need Tailscale on. Nothing is exposed to the internet.
 
 ## App Transport Security
 
-iOS blocks plain HTTP by default. `NSAllowsLocalNetworking` covers LAN addresses but, by most reports, not Tailscale's 100.64.0.0/10 range, and `NSAllowsArbitraryLoads` is ignored whenever a narrower ATS key is present. So this build sets `NSAllowsArbitraryLoads` alone, and the app's own address check (above) keeps it from talking to the internet. That key would need a justification in App Store review; once Lastbook serves HTTPS with a pinned certificate, it can go.
+iOS blocks plain HTTP by default. `NSAllowsLocalNetworking` covers LAN addresses but, by most reports, not Tailscale's 100.64.0.0/10 (CGNAT) range, `NSExceptionDomains` cannot name an IP range, and `NSAllowsArbitraryLoads` is ignored whenever a narrower ATS key (`NSAllowsLocalNetworking`, `…ForMedia`, `…InWebContent`) is present. So this build sets `NSAllowsArbitraryLoads` alone, and the app's own address check (above) keeps it from talking to the internet. That key would need a justification in App Store review; once Lastbook serves HTTPS with a pinned certificate, it can go.
 
 ## Saved items
 
-Save for offline writes single files into the app's sandbox (Application Support, excluded from iCloud backup), with a storage cap. Nothing else from the library is stored, apart from a capped viewing cache (Caches) that Settings → Clear cache empties.
+Save on this device writes single files into the app's sandbox (Application Support, excluded from iCloud backup, not synced to your other devices), with a storage cap. Nothing else from the library is stored, apart from a capped viewing cache (Caches) that Settings → Clear cache empties.
 
 ## When Lastbook supports it
 
-Pairing tokens with a list and revoke, a QR code, Bonjour discovery (`_lastbook._tcp`, no secrets in TXT), TLS with a pinned fingerprint, MagicDNS names, and published H.264 copies of AV1/VP9 videos. The app will adopt them without dropping the access-link path.
+A "New key" button, pairing tokens with a list and revoke, a QR code, Bonjour discovery (`_lastbook._tcp`, no secrets in TXT), TLS with a pinned fingerprint, MagicDNS names, and published H.264 copies of AV1/VP9 videos. The app will adopt them without dropping the access-link path.

@@ -102,7 +102,7 @@ Save for offline:
 Access and security:
 
 15. Edit the library, change one character of the key, save, open it: "Access key not accepted".
-16. Restart `server.py` after deleting `derived/lan-key` in the Lastbook folder: the old key stops working; paste the new link.
+16. Stop sharing (Ctrl-C `server.py`, or Stop sharing), delete `derived/lan-key` in the **library data folder** (the folder you passed to `--data`), and start sharing again: the old key stops working; paste the new link. Stopping and starting without deleting the file keeps the same key.
 17. Try adding a public IP (e.g. 8.8.8.8) or a name (`mymac.local`): the app refuses with an explanation.
 
 Tailscale (away from home):
